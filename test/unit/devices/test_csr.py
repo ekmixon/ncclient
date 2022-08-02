@@ -8,9 +8,8 @@ class TestCsrDevice(unittest.TestCase):
         self.obj = CsrDeviceHandler({'name': 'csr'})
 
     def test_add_additional_ssh_connect_params(self):
-        expected = dict()
-        expected["unknown_host_cb"] = csr_unknown_host_cb
-        actual = dict()
+        expected = {"unknown_host_cb": csr_unknown_host_cb}
+        actual = {}
         self.obj.add_additional_ssh_connect_params(actual)
         self.assertDictEqual(expected, actual)
 

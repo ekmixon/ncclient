@@ -30,9 +30,7 @@ class IosxeDeviceHandler(DefaultDeviceHandler):
         super(IosxeDeviceHandler, self).__init__(device_params)
 
     def add_additional_operations(self):
-        dict = {}
-        dict["save_config"] = SaveConfig
-        return dict
+            return {"save_config": SaveConfig}
         
     def add_additional_ssh_connect_params(self, kwargs):
         kwargs['unknown_host_cb'] = iosxe_unknown_host_cb

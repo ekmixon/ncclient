@@ -209,11 +209,7 @@ class DefaultDeviceHandler(object):
             if error_text.startswith(ex):
                 return True
 
-        for ex in self._exempt_errors_full_wildcard_match:
-            if ex in error_text:
-                return True
-
-        return False
+        return any(ex in error_text for ex in self._exempt_errors_full_wildcard_match)
 
 
     def perform_qualify_check(self):

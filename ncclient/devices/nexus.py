@@ -39,9 +39,7 @@ class NexusDeviceHandler(DefaultDeviceHandler):
         super(NexusDeviceHandler, self).__init__(device_params)
 
     def add_additional_operations(self):
-        dict = {}
-        dict['exec_command'] = ExecCommand
-        return dict
+        return {'exec_command': ExecCommand}
 
     def get_capabilities(self):
         # Just need to replace a single value in the default capabilities
@@ -73,7 +71,7 @@ class NexusDeviceHandler(DefaultDeviceHandler):
                 "nfcli": "http://www.cisco.com/nxos:1.0:nfcli",
                 "vlan_mgr_cli": "http://www.cisco.com/nxos:1.0:vlan_mgr_cli"
             }
-        d.update(self.get_xml_base_namespace_dict())
+        d |= self.get_xml_base_namespace_dict()
         return { "nsmap" : d }
 
     def get_ssh_subsystem_names(self):
@@ -90,7 +88,7 @@ class NexusDeviceHandler(DefaultDeviceHandler):
         name_list = [ "netconf", "xmlagent" ]
         if preferred_ssh_subsystem:
             return [ preferred_ssh_subsystem ] + \
-                        [ n for n in name_list if n != preferred_ssh_subsystem ]
+                            [ n for n in name_list if n != preferred_ssh_subsystem ]
         else:
             return name_list
 

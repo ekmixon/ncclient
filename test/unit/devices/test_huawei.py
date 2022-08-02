@@ -29,9 +29,7 @@ class TestHuaweiDevice(unittest.TestCase):
         self.obj = HuaweiDeviceHandler({'name': 'huawei'})
 
     def test_add_additional_operations(self):
-        expected = dict()
-        expected['cli'] = CLI
-        expected['action'] = Action
+        expected = {'cli': CLI, 'action': Action}
         self.assertDictEqual(expected, self.obj.add_additional_operations())
 
     def test_handle_raw_dispatch(self):
@@ -46,8 +44,7 @@ class TestHuaweiDevice(unittest.TestCase):
         self.assertDictEqual(expected, self.obj.get_xml_base_namespace_dict())
 
     def test_get_xml_extra_prefix_kwargs(self):
-        expected = dict()
-        expected['nsmap'] = self.obj.get_xml_base_namespace_dict()
+        expected = {'nsmap': self.obj.get_xml_base_namespace_dict()}
         self.assertDictEqual(expected, self.obj.get_xml_extra_prefix_kwargs())
 
     def test_perform_qualify_check(self):

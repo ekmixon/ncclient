@@ -38,14 +38,11 @@ class SrosDeviceHandler(DefaultDeviceHandler):
 
     def get_xml_extra_prefix_kwargs(self):
         d = {}
-        d.update(self.get_xml_base_namespace_dict())
+        d |= self.get_xml_base_namespace_dict()
         return {"nsmap": d}
 
     def add_additional_operations(self):
-        operations = {
-            'md_cli_raw_command': MdCliRawCommand
-        }
-        return operations
+        return {'md_cli_raw_command': MdCliRawCommand}
 
     def perform_qualify_check(self):
         return False

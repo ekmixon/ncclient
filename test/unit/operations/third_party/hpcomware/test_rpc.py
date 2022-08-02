@@ -22,7 +22,7 @@ class TestRPC(unittest.TestCase):
         actual = obj.request(cmds=cmds)
         self.assertEqual(expected, actual)
 
-        commands = [cmd for cmd in cmds]
+        commands = list(cmds)
         actual = obj.request(cmds=commands)
         self.assertEqual(expected, actual)
 
@@ -36,7 +36,7 @@ class TestRPC(unittest.TestCase):
         actual = obj.request(cmds=cmds)
         self.assertEqual(expected, actual)
 
-        commands = [cmd for cmd in cmds]
+        commands = list(cmds)
         actual = obj.request(cmds=commands)
         self.assertEqual(expected, actual)
 

@@ -12,14 +12,16 @@ from ncclient import manager
 from lxml import etree
 
 current_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
- 
+
 # build xml
 config_e = etree.Element("config")
 configuration = etree.SubElement(config_e, "interface-configurations", nsmap = {None: 'http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg'})
 interface_cfg = etree.SubElement(configuration, "interface-configuration")
 active = etree.SubElement(interface_cfg, "active").text = 'act'
 interface_name = etree.SubElement(interface_cfg, "interface-name").text = 'GigabitEthernet0/0/0/0'
-description = etree.SubElement(interface_cfg, "description").text  = 'NETCONF configured - ' + current_time
+description = etree.SubElement(
+    interface_cfg, "description"
+).text = f'NETCONF configured - {current_time}'
 
 def demo(host, user, password):
     with manager.connect(host=host, port=830, username=user, password=password,

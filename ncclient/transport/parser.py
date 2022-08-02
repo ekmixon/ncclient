@@ -87,7 +87,7 @@ class SAXFilterXMLNotFoundError(OperationError):
         self._listener = rpc_listener
 
     def __str__(self):
-        return "SAX filter input xml not provided for listener: %s" % self._listener
+        return f"SAX filter input xml not provided for listener: {self._listener}"
 
 
 class DefaultXMLParser(object):
@@ -150,8 +150,7 @@ class DefaultXMLParser(object):
         else:
             # handle case that MSG_DELIM is split over two chunks
             self._parsing_pos10 = buf.tell() - MSG_DELIM_LEN
-            if self._parsing_pos10 < 0:
-                self._parsing_pos10 = 0
+            self._parsing_pos10 = max(self._parsing_pos10, 0)
 
     def _parse11(self):
 
@@ -172,7 +171,7 @@ class DefaultXMLParser(object):
         data_len = len(data)
         start = 0
         self.logger.debug('_parse11: working with buffer of %d bytes', data_len)
-        while True and start < data_len:
+        while start < data_len:
             # match to see if we found at least some kind of delimiter
             self.logger.debug('_parse11: matching from %d bytes from start of buffer', start)
             re_result = RE_NC11_DELIM.match(data[start:].decode('utf-8'))

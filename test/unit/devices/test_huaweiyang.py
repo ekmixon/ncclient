@@ -16,6 +16,5 @@ class TestHuaweiyangDevice(unittest.TestCase):
         self.assertDictEqual(expected, self.obj.get_xml_base_namespace_dict())
 
     def test_get_xml_extra_prefix_kwargs(self):
-        expected = dict()
-        expected['nsmap'] = self.obj.get_xml_base_namespace_dict()
+        expected = {'nsmap': self.obj.get_xml_base_namespace_dict()}
         self.assertDictEqual(expected, self.obj.get_xml_extra_prefix_kwargs())

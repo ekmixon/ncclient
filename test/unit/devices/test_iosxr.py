@@ -8,9 +8,8 @@ class TestIosxrDevice(unittest.TestCase):
         self.obj = IosxrDeviceHandler({'name': 'iosxe'})
 
     def test_add_additional_ssh_connect_params(self):
-        expected = dict()
-        expected["unknown_host_cb"] = iosxr_unknown_host_cb
-        actual = dict()
+        expected = {"unknown_host_cb": iosxr_unknown_host_cb}
+        actual = {}
         self.obj.add_additional_ssh_connect_params(actual)
         self.assertDictEqual(expected, actual)
 

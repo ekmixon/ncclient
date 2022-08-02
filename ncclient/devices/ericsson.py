@@ -32,7 +32,7 @@ class EricssonDeviceHandler(DefaultDeviceHandler):
     def get_xml_extra_prefix_kwargs(self):
         d = {}
         if self.check_device_params() is False:
-            d.update(self.get_xml_base_namespace_dict())
+            d |= self.get_xml_base_namespace_dict()
         return {"nsmap": d}
 
     def check_device_params(self):

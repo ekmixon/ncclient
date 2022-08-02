@@ -63,7 +63,7 @@ def connect(host, port, user, password):
             logging.info('Admin save unsuccessful')
 
     except RPCError as err:
-        logging.info('Error: %s' % err.message.strip())
+        logging.info(f'Error: {err.message.strip()}')
 
 
     ## Issue an unsupported command and handle the RPC error gracefully
@@ -75,7 +75,7 @@ def connect(host, port, user, password):
             logging.info('Command unsuccessful')
 
     except RPCError as err:
-        logging.info('Error: %s' % err.message.strip())
+        logging.info(f'Error: {err.message.strip()}')
 
     m.close_session()
 

@@ -27,4 +27,10 @@ if __name__ == '__main__':
     logging.basicConfig(stream=sys.stdout, level=logging.INFO, format=LOG_FORMAT)
 
     interface = 'em0'
-    connect('router', 830, 'netconf', 'juniper!', 'set interfaces %s description example' % interface)
+    connect(
+        'router',
+        830,
+        'netconf',
+        'juniper!',
+        f'set interfaces {interface} description example',
+    )

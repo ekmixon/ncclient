@@ -12,9 +12,8 @@ class TestIosxeDevice(unittest.TestCase):
         self.assertDictEqual(expected, self.obj.add_additional_operations())
 
     def test_add_additional_ssh_connect_params(self):
-        expected = dict()
-        expected["unknown_host_cb"] = iosxe_unknown_host_cb
-        actual = dict()
+        expected = {"unknown_host_cb": iosxe_unknown_host_cb}
+        actual = {}
         self.obj.add_additional_ssh_connect_params(actual)
         self.assertDictEqual(expected, actual)
 

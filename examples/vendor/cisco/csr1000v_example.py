@@ -80,7 +80,7 @@ def create_vrf(conn, vrf_name):
         rpc_obj = conn.edit_config(target='running', config=confstr)
         _check_response(rpc_obj, "CREATE_VRF")
     except Exception:
-        log.exception("Exception in creating VRF %s" % vrf_name)
+        log.exception(f"Exception in creating VRF {vrf_name}")
 
 
 def create_subinterface(conn, subinterface, vlan_id, vrf_name, ip, mask):
@@ -90,7 +90,7 @@ def create_subinterface(conn, subinterface, vlan_id, vrf_name, ip, mask):
         rpc_obj = conn.edit_config(target='running', config=confstr)
         _check_response(rpc_obj, 'CREATE_SUBINTERFACE')
     except Exception:
-        log.exception("Exception in creating subinterface %s" % subinterface)
+        log.exception(f"Exception in creating subinterface {subinterface}")
 
 
 def remove_vrf(conn, vrf_name):
@@ -99,7 +99,7 @@ def remove_vrf(conn, vrf_name):
         rpc_obj = conn.edit_config(target='running', config=confstr)
         _check_response(rpc_obj, "REMOVE_VRF")
     except Exception:
-        log.exception("Exception in removing VRF %s" % vrf_name)
+        log.exception(f"Exception in removing VRF {vrf_name}")
 
 
 def remove_subinterface(conn, subinterface):
@@ -108,16 +108,16 @@ def remove_subinterface(conn, subinterface):
         rpc_obj = conn.edit_config(target='running', config=confstr)
         _check_response(rpc_obj, 'REMOVE_SUBINTERFACE')
     except Exception:
-        log.exception("Exception in removing subinterface %s" % subinterface)
+        log.exception(f"Exception in removing subinterface {subinterface}")
 
 
 def _check_response(rpc_obj, snippet_name):
-    log.debug("RPCReply for %s is %s" % (snippet_name, rpc_obj.xml))
+    log.debug(f"RPCReply for {snippet_name} is {rpc_obj.xml}")
     xml_str = rpc_obj.xml
     if "<ok />" in xml_str:
-        log.info("%s successful" % snippet_name)
+        log.info(f"{snippet_name} successful")
     else:
-        log.error("Cannot successfully execute: %s" % snippet_name)
+        log.error(f"Cannot successfully execute: {snippet_name}")
 
 
 def test_csr(host, user, password):

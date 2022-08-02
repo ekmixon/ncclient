@@ -39,11 +39,11 @@ class TestRPC(unittest.TestCase):
         content = 'cli'
         actual = obj.request(content=content, filter=filter)
         self.assertEqual(expected, actual)
-        
+
         detail = True
         actual = obj.request(content=content, filter=filter, detail=detail)
         self.assertEqual(expected, actual)
-        
+
         content = ''
         actual = obj.request(content=content, filter=filter, detail=detail)
         self.assertEqual(expected, actual)
@@ -71,7 +71,7 @@ class TestRPC(unittest.TestCase):
         format = 'cli'
         actual=obj.request(format=format, default_operation=default_operation, config=config)
         self.assertEqual(expected, actual)
-        
+
         default_operation = ''
         actual=obj.request(format=format, default_operation=default_operation, config=config)
         self.assertEqual(expected, actual)

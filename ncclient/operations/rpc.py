@@ -59,22 +59,23 @@ class RPCError(OperationError):
             self._errlist = errs
             errlist = []
             for err in errs:
-                if err.severity:
-                    errsev = err.severity
-                else:
-                    errsev = 'undefined'
-                if err.message:
-                    errmsg = err.message
-                else:
-                    errmsg = 'not an error message in the reply. Enable debug'
+                errsev = err.severity or 'undefined'
+                errmsg = err.message or 'not an error message in the reply. Enable debug'
                 errordict = {"severity": errsev, "message":errmsg}
                 errlist.append(errordict)
             # We are interested in the severity and the message
             self._severity = 'warning'
-            self._message = "\n".join(["%s: %s" %(err['severity'].strip(), err['message'].strip()) for err in errlist])
+            self._message = "\n".join(
+                [
+                    f"{err['severity'].strip()}: {err['message'].strip()}"
+                    for err in errlist
+                ]
+            )
+
             self.errors = errs
-            has_error = filter(lambda higherr: higherr['severity'] == 'error', errlist)
-            if has_error:
+            if has_error := filter(
+                lambda higherr: higherr['severity'] == 'error', errlist
+            ):
                 self._severity = 'error'
             OperationError.__init__(self, self.message)
 
@@ -204,10 +205,7 @@ class RPCReply(object):
     def error(self):
         "Returns the first :class:`RPCError` and `None` if there were no errors."
         self.parse()
-        if self._errors:
-            return self._errors[0]
-        else:
-            return None
+        return self._errors[0] if self._errors else None
 
     @property
     def errors(self):
@@ -241,25 +239,25 @@ class RPCReplyListener(SessionListener): # internal use
 
     def callback(self, root, raw):
         tag, attrs = root
-        if self._device_handler.perform_qualify_check():
-            if tag != qualify("rpc-reply"):
-                return
+        if self._device_handler.perform_qualify_check() and tag != qualify(
+            "rpc-reply"
+        ):
+            return
         if "message-id" not in attrs:
             # required attribute so raise OperationError
             raise OperationError("Could not find 'message-id' attribute in <rpc-reply>")
-        else:
-            id = attrs["message-id"]  # get the msgid
-            with self._lock:
-                try:
-                    rpc = self._id2rpc[id]  # the corresponding rpc
-                    self.logger.debug("Delivering to %r", rpc)
-                    rpc.deliver_reply(raw)
-                except KeyError:
-                    raise OperationError("Unknown 'message-id': %s" % id)
-                # no catching other exceptions, fail loudly if must
-                else:
-                    # if no error delivering, can del the reference to the RPC
-                    del self._id2rpc[id]
+        id = attrs["message-id"]  # get the msgid
+        with self._lock:
+            try:
+                rpc = self._id2rpc[id]  # the corresponding rpc
+                self.logger.debug("Delivering to %r", rpc)
+                rpc.deliver_reply(raw)
+            except KeyError:
+                raise OperationError("Unknown 'message-id': %s" % id)
+            # no catching other exceptions, fail loudly if must
+            else:
+                # if no error delivering, can del the reference to the RPC
+                del self._id2rpc[id]
 
     def errback(self, err):
         try:
@@ -358,27 +356,40 @@ class RPC(object):
         else:
             self.logger.debug('Sync request, will wait for timeout=%r', self._timeout)
             self._event.wait(self._timeout)
-            if self._event.isSet():
-                if self._error:
-                    # Error that prevented reply delivery
-                    raise self._error
-                self._reply.parse()
-                if self._reply.error is not None and not self._device_handler.is_rpc_error_exempt(self._reply.error.message):
-                    # <rpc-error>'s [ RPCError ]
-
-                    if self._raise_mode == RaiseMode.ALL or (self._raise_mode == RaiseMode.ERRORS and self._reply.error.severity == "error"):
-                        errlist = []
-                        errors = self._reply.errors
-                        if len(errors) > 1:
-                            raise RPCError(to_ele(self._reply._raw), errs=errors)
-                        else:
-                            raise self._reply.error
-                if self._device_handler.transform_reply():
-                    return NCElement(self._reply, self._device_handler.transform_reply(), huge_tree=self._huge_tree)
-                else:
-                    return self._reply
-            else:
+            if not self._event.isSet():
                 raise TimeoutExpiredError('ncclient timed out while waiting for an rpc reply.')
+            if self._error:
+                # Error that prevented reply delivery
+                raise self._error
+            self._reply.parse()
+            if (
+                self._reply.error is not None
+                and not self._device_handler.is_rpc_error_exempt(
+                    self._reply.error.message
+                )
+                and (
+                    self._raise_mode == RaiseMode.ALL
+                    or (
+                        self._raise_mode == RaiseMode.ERRORS
+                        and self._reply.error.severity == "error"
+                    )
+                )
+            ):
+                errlist = []
+                errors = self._reply.errors
+                if len(errors) > 1:
+                    raise RPCError(to_ele(self._reply._raw), errs=errors)
+                else:
+                    raise self._reply.error
+            return (
+                NCElement(
+                    self._reply,
+                    self._device_handler.transform_reply(),
+                    huge_tree=self._huge_tree,
+                )
+                if self._device_handler.transform_reply()
+                else self._reply
+            )
 
     def request(self):
         """Subclasses must implement this method. Typically only the request needs to be built as an
@@ -391,7 +402,7 @@ class RPC(object):
         server, before making a request that requires it. A :exc:`MissingCapabilityError` will be
         raised if the capability is not available."""
         if capability not in self._session.server_capabilities:
-            raise MissingCapabilityError('Server does not support [%s]' % capability)
+            raise MissingCapabilityError(f'Server does not support [{capability}]')
 
     def deliver_reply(self, raw):
         # internal use
@@ -505,10 +516,7 @@ class GenericRPC(RPC):
             m.rpc(rpc_command)
         """
 
-        if etree.iselement(rpc_command):
-            node = rpc_command
-        else:
-            node = new_ele(rpc_command)
+        node = rpc_command if etree.iselement(rpc_command) else new_ele(rpc_command)
         if target is not None:
             node.append(util.datastore_or_url("target", target, self._assert))
         if source is not None:

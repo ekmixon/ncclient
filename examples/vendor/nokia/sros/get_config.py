@@ -58,7 +58,7 @@ def connect(host, port, user, password):
         logging.info(to_xml(running_xml, pretty_print=True))
 
     except RPCError as err:
-        logging.info('Error: %s' % err.message.strip())
+        logging.info(f'Error: {err.message.strip()}')
 
     m.close_session()
 

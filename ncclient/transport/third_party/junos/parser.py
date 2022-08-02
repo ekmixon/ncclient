@@ -81,13 +81,13 @@ class JunosXMLParser(DefaultXMLParser):
             self.sax_parser.setContentHandler(SAXParser(self._session))
         elif RPC_REPLY_END_TAG in data or RFC_RPC_REPLY_END_TAG in data:
             tag = RPC_REPLY_END_TAG if RPC_REPLY_END_TAG in data else \
-                RFC_RPC_REPLY_END_TAG
-            logger.warning("Check for rpc reply end tag within data received: %s" % data)
+                    RFC_RPC_REPLY_END_TAG
+            logger.warning(f"Check for rpc reply end tag within data received: {data}")
             msg, delim, remaining = data.partition(tag)
             self._session._buffer.seek(0, os.SEEK_END)
             self._session._buffer.write(remaining.encode())
         else:
-            logger.warning("Check if end delimiter is split within data received: %s" % data)
+            logger.warning(f"Check if end delimiter is split within data received: {data}")
             # When data is "-reply/>]]>" or "]]>"
             # Data is not full MSG_DELIM, So check if last rpc reply is complete.
             # if then, wait for next iteration of data and do a recursive call to
@@ -95,15 +95,16 @@ class JunosXMLParser(DefaultXMLParser):
             buf = self._session._buffer
             buf.seek(buf.tell() - len(RFC_RPC_REPLY_END_TAG) - MSG_DELIM_LEN)
             rpc_response_last_msg = buf.read().decode('UTF-8').replace('\n', '')
-            if RPC_REPLY_END_TAG in rpc_response_last_msg or \
-                    RFC_RPC_REPLY_END_TAG in rpc_response_last_msg:
+            if (
+                RPC_REPLY_END_TAG in rpc_response_last_msg
+                or RFC_RPC_REPLY_END_TAG in rpc_response_last_msg
+            ):
                 tag = RPC_REPLY_END_TAG if RPC_REPLY_END_TAG in \
-                                           rpc_response_last_msg else \
-                    RFC_RPC_REPLY_END_TAG
-                # rpc_response_last_msg and data can be overlapping
-                match_obj = difflib.SequenceMatcher(None, rpc_response_last_msg,
-                                                    data).get_matching_blocks()
-                if match_obj:
+                                               rpc_response_last_msg else \
+                        RFC_RPC_REPLY_END_TAG
+                if match_obj := difflib.SequenceMatcher(
+                    None, rpc_response_last_msg, data
+                ).get_matching_blocks():
                     # 0 means second string match start from beginning, hence
                     # there is a overlap
                     if match_obj[0].b == 0:
@@ -137,11 +138,7 @@ def _get_sax_parser_root(xml):
     :param xml: string or object to be used in parsing reply
     :return: lxml object
     """
-    if isinstance(xml, etree._Element):
-        root = xml
-    else:
-        root = etree.fromstring(xml)
-    return root
+    return xml if isinstance(xml, etree._Element) else etree.fromstring(xml)
 
 
 def escape(data, entities={}):
@@ -176,10 +173,7 @@ def quoteattr(data, entities={}):
     entities.update({'\n': '&#10;', '\r': '&#13;', '\t':'&#9;'})
     data = escape(data, entities)
     if '"' in data:
-        if "'" in data:
-            data = '"%s"' % data.replace('"', "&quot;")
-        else:
-            data = "'%s'" % data
+        data = '"%s"' % data.replace('"', "&quot;") if "'" in data else "'%s'" % data
     else:
         data = '"%s"' % data
     return data
@@ -210,7 +204,7 @@ class SAXParser(ContentHandler):
             if rpc_msg_id in rpc_reply_listener[0]._id2rpc:
                 rpc_reply_handler = rpc_reply_listener[0]._id2rpc[rpc_msg_id]
                 if hasattr(rpc_reply_handler, '_filter_xml') and \
-                        rpc_reply_handler._filter_xml is not None:
+                            rpc_reply_handler._filter_xml is not None:
                     self._cur = self._root = _get_sax_parser_root(
                         rpc_reply_handler._filter_xml)
                 else:
@@ -268,7 +262,7 @@ class SAXParser(ContentHandler):
         self._session._buffer.seek(0, os.SEEK_END)
         attrs = ''
         for (name, value) in kwargs.items():
-            attr = ' {}={}'.format(name, quoteattr(value))
+            attr = f' {name}={quoteattr(value)}'
             attrs = attrs + attr
         data = format_str.format(escape(content), attrs)
         self._session._buffer.write(str.encode(data))

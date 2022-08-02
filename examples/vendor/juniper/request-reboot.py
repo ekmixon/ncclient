@@ -17,8 +17,9 @@ def connect(host, port, user, password):
 
     result = conn.reboot()
     logging.info(result)
-    reboot_nodes = result.xpath('request-reboot-results/request-reboot-status')
-    if reboot_nodes:
+    if reboot_nodes := result.xpath(
+        'request-reboot-results/request-reboot-status'
+    ):
         reboot_time = result.xpath('request-reboot-results/request-reboot-status/@reboot-time')[0]
         if 'Shutdown NOW' in reboot_nodes[0].text:
             logging.info('Rebooted at: %s', time.ctime(int(reboot_time)))

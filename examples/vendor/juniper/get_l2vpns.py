@@ -7,14 +7,14 @@ from ncclient.xml_ import *
 
 def connect(host, port, user, password):
     with manager.connect(
-        host=host,
-        port=port,
-        username=user,
-        password=password,
-        timeout=60,
-        device_params={'name': 'junos'},
-        hostkey_verify=False
-    ) as conn:
+            host=host,
+            port=port,
+            username=user,
+            password=password,
+            timeout=60,
+            device_params={'name': 'junos'},
+            hostkey_verify=False
+        ) as conn:
         vpns = conn.command(
             'show l2circuit connections'
         ).xpath(
@@ -31,17 +31,16 @@ def connect(host, port, user, password):
                     for child in tag.getchildren():
                         if child.tag == 'local-interface':
                             ifce = child.find('interface-name').text
-                            connection_details_dict.update({'interface': ifce})
+                            connection_details_dict['interface'] = ifce
+                        elif child.tag == 'connection-id':
+                            cid = child.text
                         else:
-                            if child.tag == 'connection-id':
-                                cid = child.text
-                            else:
-                                connection_details_dict.update({child.tag: child.text})
-                    connection_details_dict.update({'neighbor': neighbor})
+                            connection_details_dict[child.tag] = child.text
+                    connection_details_dict['neighbor'] = neighbor
                     if connection_dict.get(cid):
                         connection_dict.get(cid).append(connection_details_dict)
                     else:
-                        connection_dict.update({cid: [connection_details_dict]})
+                        connection_dict[cid] = [connection_details_dict]
 
     return connection_dict
 

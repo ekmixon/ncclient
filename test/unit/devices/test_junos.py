@@ -80,23 +80,22 @@ class TestJunosDevice(unittest.TestCase):
             "xml-mode netconf need-trailer")
 
     def test_additional_operations(self):
-        dict = {}
-        dict["rpc"] = ExecuteRpc
-        dict["get_configuration"] = GetConfiguration
-        dict["load_configuration"] = LoadConfiguration
-        dict["compare_configuration"] = CompareConfiguration
-        dict["command"] = Command
-        dict["reboot"] = Reboot
-        dict["halt"] = Halt
-        dict["commit"] = Commit
-        dict["rollback"] = Rollback
+        dict = {
+            "rpc": ExecuteRpc,
+            "get_configuration": GetConfiguration,
+            "load_configuration": LoadConfiguration,
+            "compare_configuration": CompareConfiguration,
+            "command": Command,
+            "reboot": Reboot,
+            "halt": Halt,
+            "commit": Commit,
+            "rollback": Rollback,
+        }
+
         self.assertEqual(dict, self.obj.add_additional_operations())
 
     def test_transform_reply(self):
-        if sys.version >= '3':
-            reply = xml.encode('utf-8')
-        else:
-            reply = xml
+        reply = xml.encode('utf-8') if sys.version >= '3' else xml
         self.assertEqual(self.obj.transform_reply(), reply)
 
     def test_perform_quality_check(self):

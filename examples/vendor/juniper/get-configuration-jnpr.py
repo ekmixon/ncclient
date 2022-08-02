@@ -42,9 +42,7 @@ def connect(host, port, user, password):
     interfaces = result_xml.xpath('configuration/interfaces/interface')
     for i in interfaces:
         interface = i.xpath('name')[0].text
-        ip = []
-        for name in i.xpath('unit/family/inet/address/name'):
-            ip.append(name.text)
+        ip = [name.text for name in i.xpath('unit/family/inet/address/name')]
         logging.info(' %s %s', interface, ip)
 
 

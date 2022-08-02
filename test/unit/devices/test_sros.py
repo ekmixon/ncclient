@@ -40,8 +40,7 @@ class TestSrosDevice(unittest.TestCase):
         self.obj = SrosDeviceHandler({'name': 'sros'})
 
     def test_add_additional_operations(self):
-        expected = dict()
-        expected['md_cli_raw_command'] = MdCliRawCommand
+        expected = {'md_cli_raw_command': MdCliRawCommand}
         self.assertDictEqual(expected, self.obj.add_additional_operations())
 
     def test_transform_reply(self):
@@ -58,8 +57,7 @@ class TestSrosDevice(unittest.TestCase):
         self.assertDictEqual(expected, self.obj.get_xml_base_namespace_dict())
 
     def test_get_xml_extra_prefix_kwargs(self):
-        expected = dict()
-        expected['nsmap'] = self.obj.get_xml_base_namespace_dict()
+        expected = {'nsmap': self.obj.get_xml_base_namespace_dict()}
         self.assertDictEqual(expected, self.obj.get_xml_extra_prefix_kwargs())
 
     def test_perform_qualify_check(self):

@@ -131,10 +131,7 @@ def to_ele(x, huge_tree=False):
 
 def parse_root(raw):
     "Efficiently parses the root element of a *raw* XML document, returning a tuple of its qualified name and attribute dictionary."
-    if sys.version < '3':
-        fp = StringIO(raw)
-    else:
-        fp = BytesIO(raw.encode('UTF-8'))
+    fp = StringIO(raw) if sys.version < '3' else BytesIO(raw.encode('UTF-8'))
     for event, element in etree.iterparse(fp, events=('start',)):
         return (element.tag, element.attrib)
 
@@ -152,7 +149,7 @@ def validated_element(x, tags=None, attrs=None):
         if isinstance(tags, (str, bytes)):
             tags = [tags]
         if ele.tag not in tags:
-            raise XMLError("Element [%s] does not meet requirement" % ele.tag)
+            raise XMLError(f"Element [{ele.tag}] does not meet requirement")
     if attrs:
         for req in attrs:
             if isinstance(req, (str, bytes)): req = [req]
@@ -160,7 +157,7 @@ def validated_element(x, tags=None, attrs=None):
                 if alt in ele.attrib:
                     break
             else:
-                raise XMLError("Element [%s] does not have required attributes" % ele.tag)
+                raise XMLError(f"Element [{ele.tag}] does not have required attributes")
     return ele
 
 XPATH_NAMESPACES = {
@@ -213,10 +210,7 @@ class NCElement(object):
 
     def __str__(self):
         """syntactic sugar for str() - alias to tostring"""
-        if sys.version < '3':
-            return self.tostring
-        else:
-            return self.tostring.decode('UTF-8')
+        return self.tostring if sys.version < '3' else self.tostring.decode('UTF-8')
 
     @property
     def tostring(self):
@@ -242,9 +236,7 @@ class NCElement(object):
         return self.__root
 
 def parent_ns(node):
-    if node.prefix:
-        return node.nsmap[node.prefix]
-    return None
+    return node.nsmap[node.prefix] if node.prefix else None
 
 def yang_action(name, attrs):
     """Instantiate a YANG action element

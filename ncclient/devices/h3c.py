@@ -33,27 +33,25 @@ class H3cDeviceHandler(DefaultDeviceHandler):
         super(H3cDeviceHandler, self).__init__(device_params)
 
     def add_additional_operations(self):
-        dict = {}
-        dict["get_bulk"] = GetBulk
-        dict["get_bulk_config"] = GetBulkConfig
-        dict["cli"] = CLI
-        dict["action"] = Action
-        dict["save"] = Save
-        dict["load"] = Load
-        dict["rollback"] = Rollback
-        return dict
+        return {
+            "get_bulk": GetBulk,
+            "get_bulk_config": GetBulkConfig,
+            "cli": CLI,
+            "action": Action,
+            "save": Save,
+            "load": Load,
+            "rollback": Rollback,
+        }
 
     def get_capabilities(self):
-        # Just need to replace a single value in the default capabilities
-        c = super(H3cDeviceHandler, self).get_capabilities()
-        return c
+        return super(H3cDeviceHandler, self).get_capabilities()
 
     def get_xml_base_namespace_dict(self):
         return {None: BASE_NS_1_0}
 
     def get_xml_extra_prefix_kwargs(self):
         d = {}
-        d.update(self.get_xml_base_namespace_dict())
+        d |= self.get_xml_base_namespace_dict()
         return {"nsmap": d}
 
     def perform_qualify_check(self):

@@ -87,7 +87,7 @@ class TestSSH(unittest.TestCase):
             remainder = ok_chunk
         parsemethod(obj)
 
-        for i in range(0, len(expected_messages)):
+        for i in range(len(expected_messages)):
             call = mock_dispatch.call_args_list[i][0][0]
             self.assertEqual(call, expected_messages[i])
 
@@ -111,7 +111,7 @@ class TestSSH(unittest.TestCase):
         obj.parser._parse11()
 
         expected_messages = [reply_data, reply_ok]
-        for i in range(0, len(expected_messages)):
+        for i in range(len(expected_messages)):
             call = mock_dispatch.call_args_list[i][0][0]
             self.assertEqual(call, expected_messages[i])
 
@@ -128,15 +128,13 @@ class TestSSH(unittest.TestCase):
             self.assertFalse(mock_dispatch.called)
             b = bytes(rpc_reply_part_2, "utf-8")
             obj._buffer.write(b)
-            obj._parse()
-            self.assertTrue(mock_dispatch.called)
         else:
             obj._buffer.write(rpc_reply_part_1)
             obj._parse()
             self.assertFalse(mock_dispatch.called)
             obj._buffer.write(rpc_reply_part_2)
-            obj._parse()
-            self.assertTrue(mock_dispatch.called)
+        obj._parse()
+        self.assertTrue(mock_dispatch.called)
 
     @patch('paramiko.transport.Transport.auth_publickey')
     @patch('paramiko.agent.AgentSSH.get_keys')
@@ -215,7 +213,7 @@ class TestSSH(unittest.TestCase):
         obj = SSHSession(device_handler)
         obj._transport = paramiko.Transport(MagicMock())
         self.assertRaises(AuthenticationError,
-			              obj._auth,'user', None, [], False, True)
+    			          obj._auth,'user', None, [], False, True)
 
     @patch('paramiko.transport.Transport.auth_password')
     def test_auth_password(self, mock_auth_password):

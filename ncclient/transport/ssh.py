@@ -81,7 +81,7 @@ def _colonify(fp):
     fp = fp.decode('UTF-8')
     finga = fp[:2]
     for idx in range(2, len(fp), 2):
-        finga += ":" + fp[idx:idx+2]
+        finga += f":{fp[idx:idx+2]}"
     return finga
 
 

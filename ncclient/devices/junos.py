@@ -44,17 +44,17 @@ class JunosDeviceHandler(DefaultDeviceHandler):
         }
 
     def add_additional_operations(self):
-        dict = {}
-        dict["rpc"] = ExecuteRpc
-        dict["get_configuration"] = GetConfiguration
-        dict["load_configuration"] = LoadConfiguration
-        dict["compare_configuration"] = CompareConfiguration
-        dict["command"] = Command
-        dict["reboot"] = Reboot
-        dict["halt"] = Halt
-        dict["commit"] = Commit
-        dict["rollback"] = Rollback
-        return dict
+        return {
+            "rpc": ExecuteRpc,
+            "get_configuration": GetConfiguration,
+            "load_configuration": LoadConfiguration,
+            "compare_configuration": CompareConfiguration,
+            "command": Command,
+            "reboot": Reboot,
+            "halt": Halt,
+            "commit": Commit,
+            "rollback": Rollback,
+        }
 
     def perform_qualify_check(self):
         return False
@@ -63,12 +63,8 @@ class JunosDeviceHandler(DefaultDeviceHandler):
         if 'routing-engine' in raw:
             raw = re.sub(r'<ok/>', '</routing-engine>\n<ok/>', raw)
             return raw
-        # check if error is during capabilities exchange itself
         elif re.search(r'<rpc-reply>.*?</rpc-reply>.*</hello>?', raw, re.M | re.S):
-            errs = re.findall(
-                r'<rpc-error>.*?</rpc-error>', raw, re.M | re.S)
-            err_list = []
-            if errs:
+            if errs := re.findall(r'<rpc-error>.*?</rpc-error>', raw, re.M | re.S):
                 add_ns = """
                         <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                           <xsl:output indent="yes"/>
@@ -78,6 +74,7 @@ class JunosDeviceHandler(DefaultDeviceHandler):
                             </xsl:element>
                           </xsl:template>
                         </xsl:stylesheet>"""
+                err_list = []
                 for err in errs:
                     doc = etree.ElementTree(etree.XML(err))
                     # Adding namespace using xslt
@@ -91,7 +88,7 @@ class JunosDeviceHandler(DefaultDeviceHandler):
     def handle_connection_exceptions(self, sshsession):
         c = sshsession._channel = sshsession._transport.open_channel(
             kind="session")
-        c.set_name("netconf-command-" + str(sshsession._channel_id))
+        c.set_name(f"netconf-command-{str(sshsession._channel_id)}")
         c.exec_command("xml-mode netconf need-trailer")
         return True
 
@@ -123,22 +120,16 @@ class JunosDeviceHandler(DefaultDeviceHandler):
         </xsl:stylesheet>
         '''
         import sys
-        if sys.version < '3':
-            return reply
-        else:
-            return reply.encode('UTF-8')
+        return reply if sys.version < '3' else reply.encode('UTF-8')
 
     def get_xml_parser(self, session):
-        # use_filter in device_params can be used to enabled using SAX parsing
-        if self.device_params.get('use_filter', False):
-            l = session.get_listener_instance(SAXParserHandler)
-            if l:
-                session.remove_listener(l)
-                del l
-            session.add_listener(SAXParserHandler(session))
-            return JunosXMLParser(session)
-        else:
+        if not self.device_params.get('use_filter', False):
             return DefaultXMLParser(session)
+        if l := session.get_listener_instance(SAXParserHandler):
+            session.remove_listener(l)
+            del l
+        session.add_listener(SAXParserHandler(session))
+        return JunosXMLParser(session)
 
 
 def fix_get_schema_reply(root):

@@ -36,15 +36,15 @@ class AluDeviceHandler(DefaultDeviceHandler):
 
     def get_xml_extra_prefix_kwargs(self):
         d = {}
-        d.update(self.get_xml_base_namespace_dict())
+        d |= self.get_xml_base_namespace_dict()
         return {"nsmap": d}
 
     def add_additional_operations(self):
-        dict = {}
-        dict["get_configuration"] = GetConfiguration
-        dict["show_cli"] = ShowCLI
-        dict["load_configuration"] = LoadConfiguration
-        return dict
+        return {
+            "get_configuration": GetConfiguration,
+            "show_cli": ShowCLI,
+            "load_configuration": LoadConfiguration,
+        }
 
     def transform_reply(self):
         return remove_namespaces

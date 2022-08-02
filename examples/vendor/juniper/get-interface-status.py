@@ -23,7 +23,7 @@ def connect(host, port, user, password):
     for name, status in zip(interface_name, interface_status):
         name = name.text.split('\n')[1]
         status = status.text.split('\n')[1]
-        logging.info("{} - {}".format(name, status))
+        logging.info(f"{name} - {status}")
 
 
 if __name__ == '__main__':

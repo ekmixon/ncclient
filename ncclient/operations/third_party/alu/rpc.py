@@ -40,18 +40,11 @@ class GetConfiguration(RPC):
                 rep = new_ele('filter')
                 sub_filter = sub_ele(rep, 'config-format-cli-block')
 
-                if filter is not None:
-                    for item in filter:
-                        if detail:
-                            sub_ele(sub_filter, 'cli-info-detail').text = item
-                        else:
-                            sub_ele(sub_filter, 'cli-info').text = item
-                else:
+                for item in filter:
                     if detail:
-                        sub_ele(sub_filter, 'cli-info-detail')
+                        sub_ele(sub_filter, 'cli-info-detail').text = item
                     else:
-                        sub_ele(sub_filter, 'cli-info')
-
+                        sub_ele(sub_filter, 'cli-info').text = item
                 node.append(validated_element(rep))
 
         return self._request(node)
@@ -68,13 +61,13 @@ class LoadConfiguration(RPC):
             sub_ele(node, "default-operation").text = default_operation
 
         if config is not None:
-            if format == 'xml':
-                node.append(util.datastore_or_url('target', target, self._assert))
-                config_node.append(config)
-
             if format == 'cli':
                 node.append(util.datastore_or_url('target', 'running', self._assert))
                 sub_ele(config_node, 'config-format-cli-block').text = config
+
+            elif format == 'xml':
+                node.append(util.datastore_or_url('target', target, self._assert))
+                config_node.append(config)
 
             node.append(config_node)
         return self._request(node)

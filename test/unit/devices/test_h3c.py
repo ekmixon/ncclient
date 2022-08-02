@@ -24,22 +24,23 @@ class TestH3cDevice(unittest.TestCase):
         self.obj = H3cDeviceHandler({'name': 'h3c'})
 
     def test_add_additional_operations(self):
-        expected = dict()
-        expected['get_bulk'] = GetBulk
-        expected['get_bulk_config'] = GetBulkConfig
-        expected['cli'] = CLI
-        expected['action'] = Action
-        expected['save'] = Save
-        expected['load'] = Load
-        expected['rollback'] = Rollback
+        expected = {
+            'get_bulk': GetBulk,
+            'get_bulk_config': GetBulkConfig,
+            'cli': CLI,
+            'action': Action,
+            'save': Save,
+            'load': Load,
+            'rollback': Rollback,
+        }
+
         self.assertDictEqual(expected, self.obj.add_additional_operations())
 
     def test_get_capabilities(self):
         self.assertListEqual(capabilities, self.obj.get_capabilities())
 
     def test_get_xml_extra_prefix_kwargs(self):
-        expected = dict()
-        expected['nsmap'] = self.obj.get_xml_base_namespace_dict()
+        expected = {'nsmap': self.obj.get_xml_base_namespace_dict()}
         self.assertDictEqual(expected, self.obj.get_xml_extra_prefix_kwargs())
 
     def test_perform_qualify_check(self):

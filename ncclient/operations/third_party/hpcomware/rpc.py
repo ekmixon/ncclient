@@ -11,7 +11,7 @@ class DisplayCommand(RPC):
         """
         if isinstance(cmds, list):
             cmd = '\n'.join(cmds)
-        elif isinstance(cmds, str) or isinstance(cmds, unicode):
+        elif isinstance(cmds, (str, unicode)):
             cmd = cmds
 
         node = etree.Element(qualify('CLI', BASE_NS_1_0))
@@ -32,7 +32,7 @@ class ConfigCommand(RPC):
 
         if isinstance(cmds, list):
             cmd = '\n'.join(cmds)
-        elif isinstance(cmds, str) or isinstance(cmds, unicode):
+        elif isinstance(cmds, (str, unicode)):
             cmd = cmds
 
         node = etree.Element(qualify('CLI', BASE_NS_1_0))

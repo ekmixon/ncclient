@@ -28,8 +28,7 @@ def one_of(*args):
             for argh in args[i+1:]:
                 if argh is not None:
                     raise OperationError("Too many parameters")
-            else:
-                return
+            return
     raise OperationError("Insufficient parameters")
 
 def datastore_or_url(wha, loc, capcheck=None):

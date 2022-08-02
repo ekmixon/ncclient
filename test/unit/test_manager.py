@@ -296,16 +296,18 @@ class TestManager(unittest.TestCase):
         self.assertFalse(mock_rpc.call_args[1]['huge_tree'])
 
     def _mock_manager(self, nc_params={}):
-        conn = manager.connect(host='10.10.10.10',
-                                    port=22,
-                                    username='user',
-                                    password='password',
-                                    timeout=3,
-                                    hostkey_verify=False, allow_agent=False,
-                                    device_params={'name': 'junos'},
-                                    manager_params={'timeout': 10},
-                                    nc_params=nc_params)
-        return conn
+        return manager.connect(
+            host='10.10.10.10',
+            port=22,
+            username='user',
+            password='password',
+            timeout=3,
+            hostkey_verify=False,
+            allow_agent=False,
+            device_params={'name': 'junos'},
+            manager_params={'timeout': 10},
+            nc_params=nc_params,
+        )
 
     @patch('socket.fromfd')
     @patch('paramiko.Transport')
@@ -317,13 +319,15 @@ class TestManager(unittest.TestCase):
         self.assertEqual(conn.connected, True)
 
     def _mock_outbound_manager(self):
-        conn = manager.connect(host=None,
-                                    sock_fd=6,
-                                    username='user',
-                                    password='password',
-                                    device_params={'name': 'junos'},
-                                    hostkey_verify=False, allow_agent=False)
-        return conn
+        return manager.connect(
+            host=None,
+            sock_fd=6,
+            username='user',
+            password='password',
+            device_params={'name': 'junos'},
+            hostkey_verify=False,
+            allow_agent=False,
+        )
 
     @patch('socket.socket')
     @patch('ncclient.manager.connect_ssh')

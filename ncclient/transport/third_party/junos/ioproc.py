@@ -43,9 +43,10 @@ class IOProc(SSHSession):
         stdoutdata = check_output(NETCONF_SHELL, shell=True, stdin=PIPE,
                                   stderr=STDOUT).decode(encoding="utf8")
         if 'error: Restricted user session' in stdoutdata:
-            obj = re.search(r'<error-message>\n?(.*)\n?</error-message>', stdoutdata, re.M)
-            if obj:
-                raise PermissionError(obj.group(1))
+            if obj := re.search(
+                r'<error-message>\n?(.*)\n?</error-message>', stdoutdata, re.M
+            ):
+                raise PermissionError(obj[1])
             else:
                 raise PermissionError('Restricted user session')
         elif 'xml-mode: command not found' in stdoutdata:

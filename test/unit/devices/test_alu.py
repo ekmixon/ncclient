@@ -34,15 +34,16 @@ class TestAluDevice(unittest.TestCase):
         self.assertDictEqual(expected, self.obj.get_xml_base_namespace_dict())
 
     def test_get_xml_extra_prefix_kwargs(self):
-        expected = dict()
-        expected["nsmap"] = self.obj.get_xml_base_namespace_dict()
+        expected = {"nsmap": self.obj.get_xml_base_namespace_dict()}
         self.assertDictEqual(expected, self.obj.get_xml_extra_prefix_kwargs())
 
     def test_add_additional_operations(self):
-        expected=dict()
-        expected["get_configuration"] = GetConfiguration
-        expected["show_cli"] = ShowCLI
-        expected["load_configuration"] = LoadConfiguration
+        expected = {
+            "get_configuration": GetConfiguration,
+            "show_cli": ShowCLI,
+            "load_configuration": LoadConfiguration,
+        }
+
         self.assertDictEqual(expected, self.obj.add_additional_operations())
     
     def test_transform_reply(self):

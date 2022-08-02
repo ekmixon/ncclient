@@ -34,7 +34,7 @@ class TestRPC(unittest.TestCase):
         source = 'devices-name'
         actual = obj.request(source=source)
         self.assertEqual(expected, actual)
-        
+
         filter='<filter xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"></filter>'
         actual = obj.request(source=source, filter=filter)
         self.assertEqual(expected, actual)

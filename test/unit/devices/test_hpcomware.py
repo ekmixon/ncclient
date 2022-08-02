@@ -19,10 +19,12 @@ class TestHpcomwareDevice(unittest.TestCase):
         self.assertDictEqual(expected, self.obj.get_xml_extra_prefix_kwargs())
 
     def test_add_additional_operations(self):
-        expected = dict()
-        expected['cli_display'] = DisplayCommand
-        expected['cli_config'] = ConfigCommand
-        expected['action'] = Action
-        expected['save'] = Save
-        expected['rollback'] = Rollback
+        expected = {
+            'cli_display': DisplayCommand,
+            'cli_config': ConfigCommand,
+            'action': Action,
+            'save': Save,
+            'rollback': Rollback,
+        }
+
         self.assertDictEqual(expected, self.obj.add_additional_operations())

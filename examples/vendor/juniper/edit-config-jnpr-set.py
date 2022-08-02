@@ -22,10 +22,11 @@ def connect(host, port, user, password):
     logging.info(load_config_result)
 
     # configuration as a list
-    location = []
-    location.append('set system location building "Main Campus, C"')
-    location.append('set system location floor 15')
-    location.append('set system location rack 1117')
+    location = [
+        'set system location building "Main Campus, C"',
+        'set system location floor 15',
+        'set system location rack 1117',
+    ]
 
     load_config_result = conn.load_configuration(action='set', config=location)
     logging.info(load_config_result)

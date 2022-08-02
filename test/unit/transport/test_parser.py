@@ -249,7 +249,7 @@ class TestSession(unittest.TestCase):
         rpc = '<get-software-information/>'
         mock_recv.side_effect = self._read_file('get-software-information.xml')[:-1] + [b"</rpc", b"-reply>]]>",
                                                                                         b"]]><rpc-reply>"] + \
-                                self._read_file('get-software-information.xml')[1:]
+                                    self._read_file('get-software-information.xml')[1:]
         session = SSHSession(device_handler)
         session._connected = True
         session._channel = paramiko.Channel("c100")

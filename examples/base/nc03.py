@@ -14,7 +14,7 @@ def demo(host, user, expr):
     with manager.connect(host=host, port=22, username=user) as m:
         assert(":xpath" in m.server_capabilities)
         c = m.get_config(source='running', filter=('xpath', expr)).data_xml
-        with open("%s.xml" % host, 'w') as f:
+        with open(f"{host}.xml", 'w') as f:
             f.write(c)
 
 if __name__ == '__main__':

@@ -29,14 +29,14 @@ class HpcomwareDeviceHandler(DefaultDeviceHandler):
                 "data": "http://www.hp.com/netconf/data:1.0",
                 "config": "http://www.hp.com/netconf/config:1.0",
             }
-        d.update(self.get_xml_base_namespace_dict())
+        d |= self.get_xml_base_namespace_dict()
         return {"nsmap": d}
 
     def add_additional_operations(self):
-        addtl = {}
-        addtl['cli_display'] = DisplayCommand
-        addtl['cli_config'] = ConfigCommand
-        addtl['action'] = Action
-        addtl['rollback'] = Rollback
-        addtl['save'] = Save
-        return addtl
+        return {
+            'cli_display': DisplayCommand,
+            'cli_config': ConfigCommand,
+            'action': Action,
+            'rollback': Rollback,
+            'save': Save,
+        }

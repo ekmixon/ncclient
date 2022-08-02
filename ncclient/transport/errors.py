@@ -34,7 +34,7 @@ class SessionCloseError(TransportError):
         if in_buf:
             msg += '\nIN_BUFFER: `%s`' % in_buf
         if out_buf:
-            msg += ' OUT_BUFFER: `%s`' % out_buf
+            msg += f' OUT_BUFFER: `{out_buf}`'
         SSHError.__init__(self, msg)
 
 class SSHError(TransportError):
@@ -43,7 +43,7 @@ class SSHError(TransportError):
 class SSHUnknownHostError(SSHError):
 
     def __init__(self, host, fingerprint):
-        SSHError.__init__(self, 'Unknown host key [%s] for [%s]' % (fingerprint, host))
+        SSHError.__init__(self, f'Unknown host key [{fingerprint}] for [{host}]')
         self.host = host
         self.fingerprint = fingerprint
 

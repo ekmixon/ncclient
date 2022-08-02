@@ -27,7 +27,7 @@ def _abbreviate(uri):
                 name, version = splitted[7], splitted[8]
             else:
                 name, version = splitted[5], splitted[6]
-            return [ ":" + name, ":" + name + ":" + version ]
+            return [f":{name}", f":{name}:{version}"]
         elif ":base:" in uri:
             if uri.startswith("urn:ietf:params:xml:ns:netconf"):
                 return [ ":base", ":base" + ":" + splitted[7] ]

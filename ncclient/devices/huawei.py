@@ -35,10 +35,7 @@ class HuaweiDeviceHandler(DefaultDeviceHandler):
 
 
     def add_additional_operations(self):
-        dict = {}
-        dict["cli"] = CLI
-        dict["action"] = Action
-        return dict
+        return {"cli": CLI, "action": Action}
 
     def handle_raw_dispatch(self, raw):
         return raw.strip('\0')
@@ -59,7 +56,7 @@ class HuaweiDeviceHandler(DefaultDeviceHandler):
 
     def get_xml_extra_prefix_kwargs(self):
         d = {}
-        d.update(self.get_xml_base_namespace_dict())
+        d |= self.get_xml_base_namespace_dict()
         return {"nsmap": d}
 
     def perform_qualify_check(self):

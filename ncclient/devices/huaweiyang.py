@@ -32,17 +32,12 @@ class HuaweiyangDeviceHandler(DefaultDeviceHandler):
         super(HuaweiyangDeviceHandler, self).__init__(device_params)
 
     def get_capabilities(self):
-        # Just need to replace a single value in the default capabilities
-        c = []
-        c.append('urn:ietf:params:netconf:base:1.0')
-        c.append('urn:ietf:params:netconf:base:1.1')
-        
-        return c
+        return ['urn:ietf:params:netconf:base:1.0', 'urn:ietf:params:netconf:base:1.1']
 
     def get_xml_base_namespace_dict(self):
         return {None: BASE_NS_1_0}
 
     def get_xml_extra_prefix_kwargs(self):
         d = {}
-        d.update(self.get_xml_base_namespace_dict())
+        d |= self.get_xml_base_namespace_dict()
         return {"nsmap": d}

@@ -10,10 +10,10 @@ class SessionLoggerAdapter(logging.LoggerAdapter):
         prefix = ""
         # All Session instances have an id. SSHSessions have a host as well.
         if hasattr(session, 'host'):
-            prefix += "host %s " % session.host
+            prefix += f"host {session.host} "
 
         if session.id is not None:
-            prefix += "session-id %s" % session.id
+            prefix += f"session-id {session.id}"
         else:
             prefix += "session 0x%x" % id(session)
 
@@ -23,4 +23,4 @@ class SessionLoggerAdapter(logging.LoggerAdapter):
         else:
             kwargs['extra'].update(self.extra)
 
-        return "[%s] %s" % (prefix, msg), kwargs
+        return f"[{prefix}] {msg}", kwargs

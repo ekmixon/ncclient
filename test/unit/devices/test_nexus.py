@@ -41,9 +41,8 @@ class TestNexusDevice(unittest.TestCase):
             'nfcli': 'http://www.cisco.com/nxos:1.0:nfcli',
             'vlan_mgr_cli': 'http://www.cisco.com/nxos:1.0:vlan_mgr_cli'
         }
-        temp.update(self.obj.get_xml_base_namespace_dict())
-        expected = dict()
-        expected['nsmap'] = temp
+        temp |= self.obj.get_xml_base_namespace_dict()
+        expected = {'nsmap': temp}
         self.assertDictEqual(expected, self.obj.get_xml_extra_prefix_kwargs())
 
     def test_get_ssh_subsystem_names(self):

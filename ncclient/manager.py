@@ -70,27 +70,23 @@ def make_device_handler(device_params):
     if device_params is None:
         device_params = {}
 
-    handler = device_params.get('handler', None)
-    if handler:
+    if handler := device_params.get('handler', None):
         return handler(device_params)
 
     device_name = device_params.get("name", "default")
     # Attempt to import device handler class. All device handlers are
     # in a module called "ncclient.devices.<devicename>" and in a class named
     # "<devicename>DeviceHandler", with the first letter capitalized.
-    class_name          = "%sDeviceHandler" % device_name.capitalize()
-    devices_module_name = "ncclient.devices.%s" % device_name
+    class_name = f"{device_name.capitalize()}DeviceHandler"
+    devices_module_name = f"ncclient.devices.{device_name}"
     dev_module_obj      = __import__(devices_module_name)
     handler_module_obj  = getattr(getattr(dev_module_obj, "devices"), device_name)
     class_obj           = getattr(handler_module_obj, class_name)
-    handler_obj         = class_obj(device_params)
-    return handler_obj
+    return class_obj(device_params)
 
 
 def _extract_device_params(kwds):
-    device_params = kwds.pop("device_params", None)
-
-    return device_params
+    return kwds.pop("device_params", None)
 
 def _extract_manager_params(kwds):
     manager_params = kwds.pop("manager_params", {})
@@ -101,9 +97,7 @@ def _extract_manager_params(kwds):
     return manager_params
 
 def _extract_nc_params(kwds):
-    nc_params = kwds.pop("nc_params", {})
-
-    return nc_params
+    return kwds.pop("nc_params", {})
 
 def connect_ssh(*args, **kwds):
     """
@@ -223,7 +217,7 @@ class Manager(object):
         self._device_handler = device_handler
         self._vendor_operations = {}
         if device_handler:
-            self._vendor_operations.update(device_handler.add_additional_operations())
+            self._vendor_operations |= device_handler.add_additional_operations()
 
     def __enter__(self):
         return self

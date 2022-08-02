@@ -228,10 +228,7 @@ class Dispatch(RPC):
         """
 
 
-        if etree.iselement(rpc_command):
-            node = rpc_command
-        else:
-            node = new_ele(rpc_command)
+        node = rpc_command if etree.iselement(rpc_command) else new_ele(rpc_command)
         if source is not None:
             node.append(util.datastore_or_url("source", source, self._assert))
         if filter is not None:
